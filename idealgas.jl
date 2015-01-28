@@ -84,11 +84,11 @@ function randuniform(a, b, c=1)
 end
 
 function colision(p1::Particula, V::ParedVertical )
-  p1.v[1] = -p1.v[1]
+    p1.v = [-p1.v[1], p1.v[2]]
 end
 
 function colision(p1::Particula, H::ParedHorizontal )
-  p1.v[2] = -p1.v[2]
+    p1.v = [p1.v[1],-p1.v[2]]
 end
 
 #Ver cómo especificar Q para que no sea tan amplia la definición
