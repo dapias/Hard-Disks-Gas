@@ -2,9 +2,10 @@ module IdealGas
 
 import Base.isless
 
-abstract Pared
+abstract Objeto
+abstract Pared <: Objeto
 
-type Particula{T<:Number}
+type Particula{T<:Number} <: Objeto
   r::Array{T,1}
   v::Array{T,1}
   sigma::T
@@ -13,14 +14,14 @@ end
 
 Particula(r,v,sigma) = Particula(r,v,sigma,1.0) #masa fija de 1.0
 
-type ParedVertical <: Pared
-  x
-  y #intervalo
+type ParedVertical{T<:Number} <:Pared
+  x :: T
+  y :: Array{T,1}
 end
 
-type ParedHorizontal <: Pared
-  x #intervalo
-  y
+type ParedHorizontal{T<:Number} <:Pared
+  x :: Array{T,1}
+  y :: T
 end
 
 mover(p::Particula, dt::Real) = p.r += p.v * dt
@@ -31,7 +32,6 @@ function dtcolision(p::Particula, V::ParedVertical)
       dt1 = (V.x - (p.r[1] + p.sigma))/p.v[1]
       dt2 = (V.x - (p.r[1] - p.sigma))/p.v[1]
       dt = min(dt1,dt2)
-
     else
       return Inf
     end
@@ -40,18 +40,16 @@ function dtcolision(p::Particula, V::ParedVertical)
       dt1 = (V.x - (p.r[1] + p.sigma))/p.v[1]
       dt2 = (V.x - (p.r[1] - p.sigma))/p.v[1]
       dt = min(dt1,dt2)
-
     else
       return Inf
     end
-
   else
     return Inf
   end
   return dt
 end
 
-#Hacer esto con metaprogramming
+#Hacer esto con metaprogramming o con un macro!
 
 function dtcolision(p::Particula, H::ParedHorizontal)
   if p.r[2]> H.y
@@ -79,8 +77,9 @@ function dtcolision(p::Particula, H::ParedHorizontal)
   return dt
 end
 
-#Documentar esta función
 function randuniform(a, b, c=1)
+  """Esta función genera un arreglo de longitud c con números aleatorios escogidos
+    uniformemente entre a y b"""
   a + rand(c)*(b - a)
 end
 
@@ -94,14 +93,15 @@ end
 
 #Ver cómo especificar Q para que no sea tan amplia la definición
 type Evento
-  tiempo
+  tiempo :: Number
   p1::Particula
-  Q #puede ser pared o partícula
-  etiqueta
+  Q #::Objeto -- Debe ser así, pero en este momento lleva a ciertos problemas
+  etiqueta :: Int
 end
 
 isless(e1::Evento, e2::Evento) = e1.tiempo < e2.tiempo
 
+#Revisar la función solape porque parece que tiene ciertos problemas en el caso del gas de esferas duras que es donde importa
 function solape(p1::Particula, p2::Particula)
   deltar = p1.r - p2.r
   rcuadrado = dot(deltar,deltar)
@@ -153,9 +153,7 @@ end
 
 
 
-#Colocar t max como parámetro de tipo real
-#Saber manejar la variable global tiempo (¿debe ser global?)
-function colisionesfuturas(particulas::Array, paredes::Array, tinicial, tmax, pq)
+function colisionesfuturas(particulas::Array, paredes::Array, tinicial::Number, tmax::Number, pq)
   #  pq = Collections.PriorityQueue()
 
   for i in 1:length(particulas)
@@ -240,7 +238,7 @@ function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
 
   paredes = crearparedes(Lx1,Lx2,Ly1,Ly2)
   pq = Collections.PriorityQueue()
-  Collections.enqueue!(pq,Evento(0.0, Particula([0.,0.],[0.,0.],1.0),0., 0),0.)
+  Collections.enqueue!(pq,Evento(0.0, Particula([0.,0.],[0.,0.],1.0),Particula([0.,0.],[0.,0.],1.0), 0),0.)
   pq = colisionesfuturas(particulas,paredes,tinicial,tmax, pq)
   evento = Collections.dequeue!(pq)
   t = evento.tiempo

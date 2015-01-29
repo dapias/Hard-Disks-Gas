@@ -60,4 +60,4 @@ function animate(i)
         return (circulos,)
 end
 
-anim = animation.FuncAnimation(fig, animate, frames=1000, interval=10, blit=false, repeat = false)
+anim = animation.FuncAnimation(fig, animate, frames=1000, interval=20, blit=false, repeat = false)
