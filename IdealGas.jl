@@ -8,11 +8,11 @@ abstract Pared <: Objeto
 type Particula{T<:Number} <: Objeto
   r::Array{T,1}
   v::Array{T,1}
-  sigma::T
+  radio::T
   m::T
 end
 
-Particula(r,v,sigma) = Particula(r,v,sigma,1.0) #masa fija de 1.0
+Particula(r,v,radio) = Particula(r,v,radio,1.0) #masa fija de 1.0
 
 type ParedVertical{T<:Number} <:Pared
   x :: T
@@ -29,16 +29,16 @@ mover(p::Particula, dt::Real) = p.r += p.v * dt
 function dtcolision(p::Particula, V::ParedVertical)
   if p.r[1] > V.x
     if p.v[1] < 0
-      dt1 = (V.x - (p.r[1] + p.sigma))/p.v[1]
-      dt2 = (V.x - (p.r[1] - p.sigma))/p.v[1]
+      dt1 = (V.x - (p.r[1] + p.radio))/p.v[1]
+      dt2 = (V.x - (p.r[1] - p.radio))/p.v[1]
       dt = min(dt1,dt2)
     else
       return Inf
     end
   elseif p.r[1] < V.x
     if p.v[1] > 0
-      dt1 = (V.x - (p.r[1] + p.sigma))/p.v[1]
-      dt2 = (V.x - (p.r[1] - p.sigma))/p.v[1]
+      dt1 = (V.x - (p.r[1] + p.radio))/p.v[1]
+      dt2 = (V.x - (p.r[1] - p.radio))/p.v[1]
       dt = min(dt1,dt2)
     else
       return Inf
@@ -54,8 +54,8 @@ end
 function dtcolision(p::Particula, H::ParedHorizontal)
   if p.r[2]> H.y
     if p.v[2] < 0
-      dt1 = (H.y - (p.r[2] + p.sigma))/p.v[2]
-      dt2 = (H.y - (p.r[2] - p.sigma))/p.v[2]
+      dt1 = (H.y - (p.r[2] + p.radio))/p.v[2]
+      dt2 = (H.y - (p.r[2] - p.radio))/p.v[2]
       dt = min(dt1,dt2)
     else
       return Inf
@@ -64,8 +64,8 @@ function dtcolision(p::Particula, H::ParedHorizontal)
   elseif p.r[2]< H.y
 
     if p.v[2] > 0
-      dt1 = (H.y - (p.r[2] + p.sigma))/p.v[2]
-      dt2 = (H.y - (p.r[2] - p.sigma))/p.v[2]
+      dt1 = (H.y - (p.r[2] + p.radio))/p.v[2]
+      dt2 = (H.y - (p.r[2] - p.radio))/p.v[2]
       dt = min(dt1,dt2)
     else
       return Inf
@@ -105,7 +105,7 @@ isless(e1::Evento, e2::Evento) = e1.tiempo < e2.tiempo
 function solape(p1::Particula, p2::Particula)
   deltar = p1.r - p2.r
   rcuadrado = dot(deltar,deltar)
-  return rcuadrado < (p1.sigma + p2.sigma)^2
+  return rcuadrado < (p1.radio + p2.radio)^2
 end
 
 

@@ -26,13 +26,13 @@ fig = plt.figure()
 ax = fig[:add_axes]([0.05, 0.05, 0.9, 0.9])
 ax[:set_xlim](Lx1, Lx2)
 ax[:set_ylim](Ly1, Ly2)
-c = patch.Circle(pos[1][1],q[4][1].sigma) #En pos[1][1] el primer 1 se refiere a la particula, en tanto que el
+c = patch.Circle(pos[1][1],q[4][1].radio) #En pos[1][1] el primer 1 se refiere a la particula, en tanto que el
 #segundo se refiere al evento. En q[4] el 1 se refiere a la particula
 circulos = [c]
 ax[:add_patch](c)
 
 for k in 2:N
-    c = patch.Circle(pos[k][1],q[4][k].sigma)
+    c = patch.Circle(pos[k][1],q[4][k].radio)
     push!(circulos,c)
     ax[:add_patch](c)
 end
