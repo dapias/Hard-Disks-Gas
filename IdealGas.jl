@@ -4,12 +4,13 @@ import Base.isless
 
 abstract Pared
 
-type Particula
-  r
-  v
-  sigma
-  m
+type Particula{T<:Number}
+  r::Array{T,1}
+  v::Array{T,1}
+  sigma::T
+  m::T
 end
+
 Particula(r,v,sigma) = Particula(r,v,sigma,1.0) #masa fija de 1.0
 
 type ParedVertical <: Pared
