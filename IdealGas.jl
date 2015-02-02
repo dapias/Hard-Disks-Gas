@@ -104,33 +104,42 @@ isless(e1::Evento, e2::Evento) = e1.tiempo < e2.tiempo
 #Revisar la función solape porque parece que tiene ciertos problemas en el caso del gas de esferas duras que es donde importa
 function solape(p1::Particula, p2::Particula)
   deltar = p1.r - p2.r
-  rcuadrado = dot(deltar,deltar)
-  return rcuadrado < (p1.radio + p2.radio)^2
+  r = norm(deltar)
+  return r < (p1.radio + p2.radio)
 end
 
-
-
-function crearparticulas(N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
-  radios = randuniform(0,1,N)
-  masas =  randuniform(0,1,N)
+function crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
+  radios = rand()
+  masas =  rand()
   cotainfx = Lx1 + radios
   cotasupx = Lx2 - radios
   cotainfy = Ly1 + radios
   cotasupy = Ly2 - radios
-  x = randuniform(cotainfx[1], cotasupx[1])
-  y = randuniform(cotainfy[1], cotasupy[1])
+  x = randuniform(cotainfx, cotasupx)
+  y = randuniform(cotainfy, cotasupy)
   v = randuniform(vmin, vmax, 2)
-  p  = Particula([x,y],v,radios[1], masas[1])
+  p  = Particula([x,y],v,radios, masas)
+  p
+end
+
+
+
+
+function crearparticulas(N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
+  p  = crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
   particulas = [p]
   for i in 2:N
     overlap = true
     while(overlap)
-      x = randuniform(cotainfx[i], cotasupx[i])
-      y = randuniform(cotainfy[i], cotasupy[i])
-      v = randuniform(vmin, vmax, 2)
-      p  = Particula([x,y],v,radios[i], masas[i])
+      p  =  crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
+      arreglo = [false]
       for particula in particulas
-        overlap = solape(particula, p)
+          test = solape(particula, p)
+        push!(arreglo,test)
+      end
+      k = findin(arreglo,true)
+      if k == []
+      overlap = false
       end
     end
     push!(particulas,p)
@@ -166,7 +175,7 @@ function colisionesfuturas(particulas::Array, paredes::Array, tinicial::Number, 
     k = findin(tiempo,dt)
     if tinicial + dt < tmax
       #pq[dt] = Evento(tinicial+dt, particulas[i], paredes[k])
-      Collections.enqueue!(pq,Evento(tinicial+dt, particulas[i], paredes[k],1),tinicial+dt)
+      Collections.enqueue!(pq,Evento(tinicial+dt, particulas[i], paredes[k[1]],1),tinicial+dt)
     end
   end
   pq
@@ -185,7 +194,7 @@ function colisionesfuturas2(particula, particulas, paredes, tinicial, tmax, pq, 
   k = findin(tiempo,dt)
   if tinicial + dt < tmax
     #pq[dt] = Evento(tinicial+dt, particulas[i], paredes[k])
-    Collections.enqueue!(pq,Evento(tinicial+dt, particula, paredes[k], etiqueta),tinicial+dt)
+    Collections.enqueue!(pq,Evento(tinicial+dt, particula, paredes[k[1]], etiqueta),tinicial+dt)
   end
 
   pq
@@ -216,7 +225,7 @@ function simulacion(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
       end
       t = evento.tiempo
       push!(tiempo,t)
-      colision(evento.p1,evento.Q[1])
+      colision(evento.p1,evento.Q)
     end
     label += 1
     colisionesfuturas2(evento.p1, particulas, paredes, t, tmax, pq, label)
@@ -267,7 +276,7 @@ function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
 
 
 
-      colision(evento.p1,evento.Q[1])
+      colision(evento.p1,evento.Q)
 
       for i in 1:N
         push!(posiciones, particulas[i].r)

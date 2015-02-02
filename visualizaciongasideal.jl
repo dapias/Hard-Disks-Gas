@@ -7,15 +7,15 @@ pygui(true)
 @pyimport matplotlib.animation as animation
 
 
-N = 5
+N = 3
 Lx1 = 0
 Lx2 = 10
 Ly1 = 0
 Ly2 = 10
-vmin = -1
-vmax = 1
+vmin = -5
+vmax = 5
 tinicial = 0
-tmax = 1000
+tmax = 100
 
 q = IdealGas.simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax);
 
