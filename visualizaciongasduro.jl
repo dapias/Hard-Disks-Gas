@@ -17,7 +17,7 @@ vmax = 5
 tinicial = 0
 tmax = 100
 
-srand(3)
+
 q = HardSphere.simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax);
 
 pos = [[q[1][k] for k in j:N:length(q[1])] for j in 1:N];
@@ -29,11 +29,13 @@ ax[:set_xlim](Lx1, Lx2)
 ax[:set_ylim](Ly1, Ly2)
 c = patch.Circle(pos[1][1],q[4][1].radio) #En pos[1][1] el primer 1 se refiere a la particula, en tanto que el
 #segundo se refiere al evento. En q[4] el 1 se refiere a la particula
+c[:set_color]((rand(),rand(),rand()))
 circulos = [c]
 ax[:add_patch](c)
 
 for k in 2:N
     c = patch.Circle(pos[k][1],q[4][k].radio)
+    c[:set_color]((rand(),rand(),rand()))
     push!(circulos,c)
     ax[:add_patch](c)
 end
