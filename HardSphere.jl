@@ -111,8 +111,8 @@ function solape(p1::Particula, p2::Particula)
 end
 
 function crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
-  radios = randuniform(0.5,1.0)
-  masas =  rand(0.5,1.0)
+  radios = 1.0
+  masas =  1.0
   #radios = 1.0
   #masas = 1.0
   cotainfx = Lx1 + radios
