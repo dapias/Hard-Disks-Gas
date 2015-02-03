@@ -2,6 +2,7 @@ module HardSphere
 
 import Base.isless
 
+export Evento, Particula
 abstract Objeto
 abstract Pared <: Objeto
 
@@ -29,59 +30,42 @@ end
 mover(p::Particula, dt::Real) = p.r += p.v * dt
 
 function dtcolision(p::Particula, V::ParedVertical)
-  if p.r[1] > V.x
-    if p.v[1] < 0
-      dt1 = (V.x - (p.r[1] + p.radio))/p.v[1]
-      dt2 = (V.x - (p.r[1] - p.radio))/p.v[1]
-      dt = min(dt1,dt2)
-    else
-      return Inf
+  #La pared siempre va a estar acotada por números positivos
+dt = Inf
+  if p.v[1] > 0
+    if p.r[1] < V.x
+      dt = (V.x - (p.r[1] + p.radio))/p.v[1]
     end
-  elseif p.r[1] < V.x
-    if p.v[1] > 0
-      dt1 = (V.x - (p.r[1] + p.radio))/p.v[1]
-      dt2 = (V.x - (p.r[1] - p.radio))/p.v[1]
-      dt = min(dt1,dt2)
-    else
-      return Inf
+  elseif p.v[1] < 0
+    if p.r[1] > V.x
+      dt = ((p.r[1] - p.radio) - V.x)/-p.v[1]
     end
-  else
-    return Inf
   end
-  return dt
+  dt
 end
+
 
 #Hacer esto con metaprogramming o con un macro!
 
 function dtcolision(p::Particula, H::ParedHorizontal)
-  if p.r[2]> H.y
-    if p.v[2] < 0
-      dt1 = (H.y - (p.r[2] + p.radio))/p.v[2]
-      dt2 = (H.y - (p.r[2] - p.radio))/p.v[2]
-      dt = min(dt1,dt2)
-    else
-      return Inf
+  dt = Inf
+  if p.v[2] > 0
+    if p.r[2] < H.y
+      dt = (H.y - (p.r[2] + p.radio))/p.v[2]
     end
-
-  elseif p.r[2]< H.y
-
-    if p.v[2] > 0
-      dt1 = (H.y - (p.r[2] + p.radio))/p.v[2]
-      dt2 = (H.y - (p.r[2] - p.radio))/p.v[2]
-      dt = min(dt1,dt2)
-    else
-      return Inf
+  elseif p.v[2] < 0
+    if p.r[2] > H.y
+      dt = ((p.r[2] - p.radio) - H.y)/-p.v[2]
     end
-  else
-    return Inf
-
   end
-  return dt
+  dt
 end
+
+
 
 function randuniform(a, b, c=1)
   """Esta función genera un arreglo de longitud c con números aleatorios escogidos
-    uniformemente entre a y b"""
+    uniformemente entreusing HardSphere a y b"""
   a + rand(c)*(b - a)
 end
 
@@ -97,7 +81,7 @@ end
 type Evento
   tiempo :: Number
   p1::Particula
-  Q ::Objeto #-- Debe ser así, pero en este momento lleva a ciertos problemas
+  Q ::Objeto
   etiqueta :: Int
 end
 
@@ -111,8 +95,8 @@ function solape(p1::Particula, p2::Particula)
 end
 
 function crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
-  radios = 1.0
-  masas =  1.0
+  radios = randuniform(0.5,1.0)[1]
+  masas =  randuniform(0.5,1.0)[1]
   #radios = 1.0
   #masas = 1.0
   cotainfx = Lx1 + radios
@@ -214,7 +198,6 @@ function colisionesfuturas(particulas::Array, paredes::Array, tinicial::Number, 
     if tinicial + dt < tmax
       Collections.enqueue!(pq,Evento(tinicial+dt, particulas[i], paredes[k[1]],1),tinicial+dt)
     end
-
         for j in i+1:length(particulas)   #Numero de pares sin repetición N(N-1)/2
             dt = dtcolision(particulas[i], particulas[j])
                 if tinicial + dt < tmax
@@ -406,7 +389,7 @@ function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
           push!(velocidades, particulas[i].v)
         end
         label += 1
-        colisionesfuturas2(evento.p1, particulas, paredes, t, tmax, pq, label)
+          colisionesfuturas2(evento.p1, particulas, paredes, t, tmax, pq, label)
       end
     end
   end
