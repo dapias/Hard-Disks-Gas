@@ -256,6 +256,15 @@ function colisionesfuturas2(particula1, particula2, particulas, paredes, tinicia
   pq
 end
 
+
+function energia(masas,velocidades)
+    e = 0.
+    for i in 1:length(masas)
+        e += masas[i]*norm(velocidades[i])^2/2.
+    end
+    e
+end
+
 function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
   #Genera lista para las posiciones y las velocidades de todas las partículas, lo cual permite generar la animación
   #usando matplotlib (PyPlot)
@@ -268,6 +277,7 @@ function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
   particulas = crearparticulas(N,Lx1,Lx2,Ly1,Ly2,vmin,vmax)
   posiciones = [particula.r for particula in particulas]
   velocidades = [particula.v for particula in particulas]
+  masas = [particula.m for particula in particulas]
   paredes = crearparedes(Lx1,Lx2,Ly1,Ly2)
   pq = Collections.PriorityQueue()
   Collections.enqueue!(pq,Evento(0.0, Particula([0.,0.],[0.,0.],1.0),Particula([0.,0.],[0.,0.],1.0), 0),0.)
@@ -314,7 +324,7 @@ function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     end
   end
   push!(tiempo, tmax)
-  posiciones, velocidades, tiempo, particulas
+  posiciones, velocidades, tiempo, particulas, masas
 end
 
 #Fin del módulo

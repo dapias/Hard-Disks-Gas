@@ -7,7 +7,7 @@ pygui(true)
 @pyimport matplotlib.animation as animation
 
 
-N = 3
+N = 10
 Lx1 = 0
 Lx2 = 10
 Ly1 = 0
@@ -22,6 +22,7 @@ q = HardSphere.simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vm
 
 pos = [[q[1][k] for k in j:N:length(q[1])] for j in 1:N];
 vel = [[q[2][k] for k in j:N:length(q[1])] for j in 1:N];
+
 
 fig = plt.figure()
 ax = fig[:add_axes]([0.05, 0.05, 0.9, 0.9])
@@ -40,6 +41,10 @@ for k in 2:N
     ax[:add_patch](c)
 end
 
+
+energy_text = plt.text(0.02,0.9,"",transform=ax[:transAxes])
+
+
 function animate(i)
 
         z = [i/10 > t for t in q[3]]
@@ -55,9 +60,11 @@ function animate(i)
         #if q[3][k] < i/10 < q[3][k+1]
         for j in 1:N
             circulos[j][:center] = (pos[j][k][1] + vel[j][k][1]*(i/10-q[3][k]), pos[j][k][2] + vel[j][k][2]*(i/10-q[3][k]))
+
         #circulos[2][:center] = (pos2[k][1] + vel2[k][1]*(i/10-q[3][k]), pos2[k][2] + vel2[k][2]*(i/10-q[3][k]))
         end
 
+    energy_text[:set_text]("energy = $(HardSphere.energia(q[5], [vel[j][k] for j in 1:N]))")
 
     end
         return (circulos,)
