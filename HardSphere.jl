@@ -1,6 +1,8 @@
 module HardSphere
 import Base.isless
 export Evento, Particula
+
+
 abstract Objeto
 abstract Pared <: Objeto
 type Particula{T<:Number} <: Objeto
