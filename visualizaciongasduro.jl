@@ -17,6 +17,7 @@ vmax = 5
 tinicial = 0
 tmax = 100
 
+srand(3)
 q = HardSphere.simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax);
 
 pos = [[q[1][k] for k in j:N:length(q[1])] for j in 1:N];
