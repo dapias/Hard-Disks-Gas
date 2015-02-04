@@ -43,12 +43,12 @@ end
 
 
 energy_text = plt.text(0.02,0.9,"",transform=ax[:transAxes])
-
+plt.gca()[:set_aspect]("equal")
 
 function animate(i)
 
-        z = [i/10 > t for t in q[3]]
-        k = findfirst(z,false) - 1
+    z = [i/10 > t for t in q[3]]
+    k = findfirst(z,false) - 1
 
     if k == 0
         for j in 1:N
@@ -61,13 +61,14 @@ function animate(i)
         for j in 1:N
             circulos[j][:center] = (pos[j][k][1] + vel[j][k][1]*(i/10-q[3][k]), pos[j][k][2] + vel[j][k][2]*(i/10-q[3][k]))
 
-        #circulos[2][:center] = (pos2[k][1] + vel2[k][1]*(i/10-q[3][k]), pos2[k][2] + vel2[k][2]*(i/10-q[3][k]))
+            #circulos[2][:center] = (pos2[k][1] + vel2[k][1]*(i/10-q[3][k]), pos2[k][2] + vel2[k][2]*(i/10-q[3][k]))
         end
 
-    energy_text[:set_text]("energy = $(HardSphere.energia(q[5], [vel[j][k] for j in 1:N]))")
+        energy_text[:set_text]("energy = $(HardSphere.energia(q[5], [vel[j][k] for j in 1:N]))")
 
     end
-        return (circulos,)
+    return (circulos,)
 end
+
 
 anim = animation.FuncAnimation(fig, animate, frames=1000, interval=20, blit=false, repeat = false)
