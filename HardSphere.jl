@@ -339,4 +339,6 @@ function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
   push!(tiempo, tmax)
   posiciones, velocidades, tiempo, particulas
 end
+
 #Fin del módulo
+end
