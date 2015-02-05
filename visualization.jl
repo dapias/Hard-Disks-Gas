@@ -1,4 +1,6 @@
-using HardSphere
+#include("./HardDisks.jl")
+
+using HardDisks
 using PyPlot
 using PyCall
 pygui(true)
@@ -18,7 +20,7 @@ tinicial = 0
 tmax = 100
 
 
-q = HardSphere.simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax);
+q = simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax);
 
 pos = [[q[1][k] for k in j:N:length(q[1])] for j in 1:N];
 vel = [[q[2][k] for k in j:N:length(q[1])] for j in 1:N];
@@ -64,7 +66,7 @@ function animate(i)
             #circulos[2][:center] = (pos2[k][1] + vel2[k][1]*(i/10-q[3][k]), pos2[k][2] + vel2[k][2]*(i/10-q[3][k]))
         end
 
-        energy_text[:set_text]("energy = $(HardSphere.energia(q[5], [vel[j][k] for j in 1:N]))")
+        energy_text[:set_text]("energy = $(energia(q[5], [vel[j][k] for j in 1:N]))")
 
     end
     return (circulos,)
