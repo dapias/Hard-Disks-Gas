@@ -1,6 +1,8 @@
-#include("./HardDisks.jl")
+include("./src/HardDisks.jl")
+include("./input_parameters.jl")
 
 using HardDisks
+#using Parameters
 using PyPlot
 using PyCall
 pygui(true)
@@ -9,15 +11,15 @@ pygui(true)
 @pyimport matplotlib.animation as animation
 
 
-N = 10
-Lx1 = 0
-Lx2 = 10
-Ly1 = 0
-Ly2 = 10
-vmin = -5
-vmax = 5
-tinicial = 0
-tmax = 100
+# N = 10
+# Lx1 = 0
+# Lx2 = 10
+# Ly1 = 0
+# Ly2 = 10
+# vmin = -5
+# vmax = 5
+# tinicial = 0
+# tmax = 100
 
 
 q = simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax);
