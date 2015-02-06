@@ -1,9 +1,9 @@
-include("./objects.jl")
+#include("./objects.jl")
 
 module Rules
 
 importall Objects
-import Base.isless
+
 export mover, dtcolision, colision
 
 

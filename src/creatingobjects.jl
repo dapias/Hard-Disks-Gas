@@ -1,10 +1,10 @@
-include("./objects.jl")
-include("./timesandrules.jl")
+#include("./objects.jl")
+#include("./timesandrules.jl")
 
 module Init
 
 importall Objects
-importall Rules
+
 export crearparticulas, crearparedes
 
 
