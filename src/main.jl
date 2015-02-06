@@ -13,7 +13,8 @@ export simulacionanimada, energia
 #This allow to use the PriorityQueue providing a criterion to select the priority of an Event.
 isless(e1::Evento, e2::Evento) = e1.tiempo < e2.tiempo
 
-@doc doc"""Calculates the initial feasible Events and push them into the PriorityQueue"""->
+@doc doc"""Calculates the initial feasible Events and push them into the PriorityQueue with label
+equal to 0"""->
 function colisionesfuturas(particulas::Array, paredes::Array, tinicial::Number, tmax::Number, pq)
 #Puts the initial label of the
     for i in 1:length(particulas)
@@ -38,6 +39,8 @@ function colisionesfuturas(particulas::Array, paredes::Array, tinicial::Number, 
 end
 
 
+@doc doc"""Updates the PriorityQueue pushing into it all the feasible Events that can occur after the collision
+of a Disk with a Wall"""->
 function colisionesfuturas2(particula, particulas, paredes, tinicial, tmax, pq, etiqueta )
     tiempo = Float64[]
     for pared in paredes
@@ -62,6 +65,8 @@ function colisionesfuturas2(particula, particulas, paredes, tinicial, tmax, pq, 
     pq
 end
 
+@doc doc"""Updates the PriorityQueue pushing into it all the possible Events that can occur after the collision
+of two Disks."""->
 function colisionesfuturas2(particula1, particula2, particulas, paredes, tinicial, tmax, pq, etiqueta)
 
     tiempo = Float64[]
@@ -97,7 +102,6 @@ function colisionesfuturas2(particula1, particula2, particulas, paredes, tinicia
         end
     end
 
-
     tiempo = Float64[]
     for p in particulas
         if (particula1 != p) & (particula2 != p)
@@ -110,7 +114,7 @@ function colisionesfuturas2(particula1, particula2, particulas, paredes, tinicia
     pq
 end
 
-
+@doc doc"""Calculates the total energy (kinetic) of the system."""
 function energia(masas,velocidades)
     e = 0.
     for i in 1:length(masas)
@@ -119,6 +123,11 @@ function energia(masas,velocidades)
     e
 end
 
+
+@doc doc"""Contains the main loop of the project. The PriorityQueue is filled at each step with Events associated
+to the collider Disk(s); and at the same time the element with the highest physical priority (lowest time) is removed
+from the Queue and ignored if it is physically meaningless. The loop goes until the last Event is removed
+from the DAta Structure, which is delimited by the maximum time(tmax)."""->
 function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     #Genera lista para las posiciones y las velocidades de todas las partículas, lo cual permite generar la animación
     #usando matplotlib (PyPlot)

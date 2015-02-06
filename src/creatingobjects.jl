@@ -1,25 +1,23 @@
-#include("./objects.jl")
-#include("./timesandrules.jl")
-
 module Init
 
 importall Objects
 
 export crearparticulas, crearparedes
 
-
+@doc doc"""Creates an random Array(Vector) of *dimension* dim with limits: liminf, limsup""" ->
 function randuniform(a, b, c=1)
-    """Esta función genera un arreglo de longitud c con números aleatorios escogidos
-uniformemente entreusing HardSphere a y b"""
     a + rand(c)*(b - a)
 end
 
+@doc doc"""Evaluates if two Disks are overlapped""" ->
 function solape(p1::Particula, p2::Particula)
     deltar = p1.r - p2.r
     r = norm(deltar)
     return r < (p1.radio + p2.radio)
 end
 
+@doc doc"""Creates a Disks enclosed in the box with boundaries at Lx1, Lx2, Ly1, Ly2; and with a random velocity
+between vmim and vmax"""->
 function crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     radios = randuniform(0.5,1.0)[1]
     masas = randuniform(0.5,1.0)[1]
@@ -34,6 +32,8 @@ function crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     p
 end
 
+@doc doc"""Creates N Disks enclosed in the box with boundaries at Lx1, Lx2, Ly1, Ly2; and with a random
+velocity between vmin and vmax"""->
 function crearparticulas(N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     p = crearparticula(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     particulas = [p]
@@ -56,6 +56,8 @@ function crearparticulas(N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     particulas
 end
 
+@doc doc"""Creates the box in which Disks will be enclosed. Its horizontal boundaries are at Lx1 and Lx2
+(Lx1 < Lx2). Its vertical boundaries are at Ly1 and Ly2 (Ly1 < Ly2)."""->
 function crearparedes(Lx1,Lx2,Ly1,Ly2)
     arreglo = Array(Pared,4)
     arreglo[1] = ParedVertical(Lx1,[Ly1,Ly2])

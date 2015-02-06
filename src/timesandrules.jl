@@ -6,9 +6,11 @@ importall Objects
 
 export mover, dtcolision, colision
 
-
+@doc doc"""Update the position of the Disk through moving it as a free particle with velocity Disk.v
+during a time interval dt"""->
 mover(p::Particula, dt::Real) = p.r += p.v * dt
 
+@doc doc"""Calculates the time of collision between the Disk and a VerticalWall"""->
 function dtcolision(p::Particula, V::ParedVertical)
     #La pared siempre va a estar acotada por números positivos
     dt = Inf
@@ -26,6 +28,8 @@ end
 
 
 #Hacer esto con metaprogramming o con un macro!
+
+@doc doc"""Calculates the time of collision between the Disk and a HorizontallWall"""->
 function dtcolision(p::Particula, H::ParedHorizontal)
     dt = Inf
     if p.v[2] > 0
@@ -40,7 +44,7 @@ function dtcolision(p::Particula, H::ParedHorizontal)
     dt
 end
 
-
+@doc doc"""Calculates the time of collision between two Disks."""->
 function dtcolision(p1::Particula,p2::Particula)
     deltar = p1.r - p2.r
     deltav = p1.v - p2.v
@@ -59,15 +63,17 @@ function dtcolision(p1::Particula,p2::Particula)
     return dt
 end
 
-
+@doc doc"""Update the velocity vector of a disk (Disk.v) after it collides with a VerticalWall."""->
 function colision(p1::Particula, V::ParedVertical )
     p1.v = [-p1.v[1], p1.v[2]]
 end
 
+@doc doc"""Update the velocity vector of a disk (Disk.v) after it collides with a HorizontallWall."""->
 function colision(p1::Particula, H::ParedHorizontal )
     p1.v = [p1.v[1],-p1.v[2]]
 end
 
+@doc doc"""Update the velocity vector of two Disks after they collides."""->
 function colision(p1::Particula, p2::Particula)
     deltar = p1.r - p2.r
     deltav = p1.v - p2.v
