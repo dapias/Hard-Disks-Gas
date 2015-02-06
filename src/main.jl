@@ -10,14 +10,12 @@ importall Init
 import Base.isless
 export simulacionanimada, energia
 
-
+#This allow to use the PriorityQueue providing a criterion to select the priority of an Event.
 isless(e1::Evento, e2::Evento) = e1.tiempo < e2.tiempo
 
-
+@doc doc"""Calculates the initial feasible Events and push them into the PriorityQueue"""->
 function colisionesfuturas(particulas::Array, paredes::Array, tinicial::Number, tmax::Number, pq)
-    """Esta función coloca en la estructura de datos los primeros eventos que ocurren en un tiempo
-menor a tmax; la diferencia con colisionesfuturas2 es que pone la etiqueta del evento
-igual a 1 haciendo referencia al hecho de que es el cálculo inicial."""
+#Puts the initial label of the
     for i in 1:length(particulas)
         tiempo = Float64[]
         for pared in paredes
@@ -27,12 +25,12 @@ igual a 1 haciendo referencia al hecho de que es el cálculo inicial."""
         dt = minimum(tiempo)
         k = findin(tiempo,dt)
         if tinicial + dt < tmax
-            Collections.enqueue!(pq,Evento(tinicial+dt, particulas[i], paredes[k[1]],1),tinicial+dt)
+            Collections.enqueue!(pq,Evento(tinicial+dt, particulas[i], paredes[k[1]],0),tinicial+dt)
         end
         for j in i+1:length(particulas) #Numero de pares sin repetición N(N-1)/2
             dt = dtcolision(particulas[i], particulas[j])
             if tinicial + dt < tmax
-                Collections.enqueue!(pq,Evento(tinicial+dt, particulas[i], particulas[j],1),tinicial+dt)
+                Collections.enqueue!(pq,Evento(tinicial+dt, particulas[i], particulas[j],0),tinicial+dt)
             end
         end
     end
