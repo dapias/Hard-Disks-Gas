@@ -29,14 +29,14 @@ function visualizate(q, N, Lx1, Lx2, Ly1, Ly2)
     ax = fig[:add_axes]([0.05, 0.05, 0.9, 0.9])
     ax[:set_xlim](Lx1, Lx2)
     ax[:set_ylim](Ly1, Ly2)
-    c = patch.Circle(pos[1][1],q[4][1].radio) #En pos[1][1] el primer 1 se refiere a la particula, en tanto que el
+    c = patch.Circle(pos[1][1],q[4][1].radius) #En pos[1][1] el primer 1 se refiere a la particula, en tanto que el
     #segundo se refiere al evento. En q[4] el 1 se refiere a la particula
     c[:set_color]((rand(),rand(),rand()))
     circulos = [c]
     ax[:add_patch](c)
 
     for k in 2:N
-        c = patch.Circle(pos[k][1],q[4][k].radio)
+        c = patch.Circle(pos[k][1],q[4][k].radius)
         c[:set_color]((rand(),rand(),rand()))
         push!(circulos,c)
         ax[:add_patch](c)
@@ -65,7 +65,7 @@ function visualizate(q, N, Lx1, Lx2, Ly1, Ly2)
                 #circulos[2][:center] = (pos2[k][1] + vel2[k][1]*(i/10-q[3][k]), pos2[k][2] + vel2[k][2]*(i/10-q[3][k]))
             end
 
-            energy_text[:set_text]("energy = $(energia(q[5], [vel[j][k] for j in 1:N]))")
+            energy_text[:set_text]("energy = $(energy(q[5], [vel[j][k] for j in 1:N]))")
 
         end
         return (circulos,)
