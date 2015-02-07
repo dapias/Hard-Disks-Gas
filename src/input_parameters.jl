@@ -2,7 +2,7 @@
 
 export N, Lx1, Lx2, Ly1, Ly2, vmin, vmax, tinicial, tmax
 
-N = 20 #Number of particles.
+N = 5 #Number of particles.
 Lx1 = 0. #Position at the x-axis of the "left" vertical wall. For the moment: Float
 Lx2 = 10. #Position at the x-axis of the "right" vertical wall. For the moment: Float
 Ly1 = 0.  #Position at the y-axis of the "down" vertical wall. For the moment: Float

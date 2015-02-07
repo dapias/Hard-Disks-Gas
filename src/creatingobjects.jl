@@ -1,6 +1,9 @@
 module Init
 
+VERSION < v"0.4-" && using Docile
+
 importall Objects
+
 
 export crearparticulas, crearparedes
 

@@ -1,5 +1,7 @@
 module Objects
 
+VERSION < v"0.4-" && using Docile
+
 export Objeto, Pared, Particula, ParedVertical, ParedHorizontal, Evento
 
 abstract Objeto

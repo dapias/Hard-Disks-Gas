@@ -4,6 +4,8 @@ include("./creatingobjects.jl")
 
 module HardDisksSimulation
 
+VERSION < v"0.4-" && using Docile
+
 importall Objects
 importall Rules
 importall Init
@@ -114,7 +116,7 @@ function colisionesfuturas2(particula1, particula2, particulas, paredes, tinicia
     pq
 end
 
-@doc doc"""Calculates the total energy (kinetic) of the system."""
+@doc doc"""Calculates the total energy (kinetic) of the system."""->
 function energia(masas,velocidades)
     e = 0.
     for i in 1:length(masas)
@@ -127,7 +129,7 @@ end
 @doc doc"""Contains the main loop of the project. The PriorityQueue is filled at each step with Events associated
 to the collider Disk(s); and at the same time the element with the highest physical priority (lowest time) is removed
 from the Queue and ignored if it is physically meaningless. The loop goes until the last Event is removed
-from the DAta Structure, which is delimited by the maximum time(tmax)."""->
+from the Data Structure, which is delimited by the maximum time(tmax)."""->
 function simulacionanimada(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     #Genera lista para las posiciones y las velocidades de todas las partículas, lo cual permite generar la animación
     #usando matplotlib (PyPlot)
