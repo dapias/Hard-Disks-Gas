@@ -41,8 +41,8 @@ end
 within the main loop in which the event was predicted (see simulacionanimada in main.jl)."""->
 type Event
   tiempo :: Number
-  p1::Disk
-  Q ::Object
+  referencedisk::Disk
+  diskorwall ::Object
   predictedcollision :: Int
 end
 

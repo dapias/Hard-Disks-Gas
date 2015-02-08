@@ -93,7 +93,8 @@ function futurecollisions(particula1, particula2, particulas, paredes, tinicial,
         Collections.enqueue!(pq,Event(tinicial+dt, particula2, paredes[k[1]], etiqueta),tinicial+dt)
     end
 
-    #Voy a considerar que no hay recolisión entre las partículas que acaban de chocar, por consiguiente ajusto el tiempo de colisión entre p1 y p2 igual a infinito.
+    #Voy a considerar que no hay recolisión entre las partículas que acaban de chocar, por consiguiente ajusto el tiempo de colisión entre disk1 y
+    #disk2 igual a infinito.
     tiempo = Float64[]
     for p in particulas
         if (particula1 != p) & (particula2 != p)
@@ -155,36 +156,36 @@ function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     while(!isempty(pq))
         label += 1
         evento = Collections.dequeue!(pq)
-        if (evento.predictedcollision >= evento.p1.lastcollision)
-            if typeof(evento.Q) == Disk{Float64}
-                if (evento.predictedcollision >= evento.Q.lastcollision)
-                    evento.Q.lastcollision = label
-                    evento.p1.lastcollision = label
+        if (evento.predictedcollision >= evento.referencedisk.lastcollision)
+            if typeof(evento.diskorwall) == Disk{Float64}
+                if (evento.predictedcollision >= evento.diskorwall.lastcollision)
+                    evento.diskorwall.lastcollision = label
+                    evento.referencedisk.lastcollision = label
                     for particula in particulas
                         move(particula,evento.tiempo - t)
                     end
                     t = evento.tiempo
                     push!(tiempo,t)
-                    collision(evento.p1,evento.Q)
+                    collision(evento.referencedisk,evento.diskorwall)
                     for i in 1:N
                         push!(posiciones, particulas[i].r)
                         push!(velocidades, particulas[i].v)
                     end
-                    futurecollisions(evento.p1, evento.Q, particulas, paredes, t, tmax, pq,label)
+                    futurecollisions(evento.referencedisk, evento.diskorwall, particulas, paredes, t, tmax, pq,label)
                 end
             else
-                evento.p1.lastcollision = label
+                evento.referencedisk.lastcollision = label
                 for particula in particulas
                     move(particula,evento.tiempo - t)
                 end
                 t = evento.tiempo
                 push!(tiempo,t)
-                collision(evento.p1,evento.Q)
+                collision(evento.referencedisk,evento.diskorwall)
                 for i in 1:N
                     push!(posiciones, particulas[i].r)
                     push!(velocidades, particulas[i].v)
                 end
-                futurecollisions(evento.p1, particulas, paredes, t, tmax, pq, label)
+                futurecollisions(evento.referencedisk, particulas, paredes, t, tmax, pq, label)
             end
         end
     end
