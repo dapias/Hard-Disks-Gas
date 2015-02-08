@@ -142,7 +142,7 @@ function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     particulas = createdisks(N,Lx1,Lx2,Ly1,Ly2,vmin,vmax)
     posiciones = [particula.r for particula in particulas]
     velocidades = [particula.v for particula in particulas]
-    masas = [particula.m for particula in particulas]
+    masas = [particula.mass for particula in particulas]
     paredes = createwalls(Lx1,Lx2,Ly1,Ly2)
     pq = Collections.PriorityQueue()
     Collections.enqueue!(pq,Event(0.0, Disk([0.,0.],[0.,0.],1.0),Disk([0.,0.],[0.,0.],1.0), 0),0.)

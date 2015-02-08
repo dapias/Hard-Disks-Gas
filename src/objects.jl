@@ -14,7 +14,7 @@ type Disk{T<:Number} <: Object
   r::Array{T,1}
   v::Array{T,1}
   radius::T
-  m::T
+  mass::T
   lastcollision ::Int
 end
 

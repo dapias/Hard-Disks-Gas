@@ -82,9 +82,9 @@ function collision(p1::Disk, p2::Disk)
     deltav = p1.v - p2.v
     h = dot(deltar,deltav)
     sigma = p1.radius+p2.radius
-    J = 2*p1.m*p2.m*h/(sigma*(p1.m + p2.m))
-    p1.v -= J*deltar/(sigma*p1.m)
-    p2.v += J*deltar/(sigma*p2.m)
+    J = 2*p1.mass*p2.mass*h/(sigma*(p1.mass + p2.mass))
+    p1.v -= J*deltar/(sigma*p1.mass)
+    p2.v += J*deltar/(sigma*p2.mass)
 end
 
 end
