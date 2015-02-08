@@ -149,14 +149,13 @@ from the Queue and ignored if it is physically meaningless. The loop goes until 
 from the Data Structure, which is delimited by the maximum time(tmax)."""->
 function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     particulas, paredes, posiciones, velocidades, masas, pq, t, tiempo = startingsimulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
-
-    #Label hace referencia a la etiqueta que asocio a los eventos que calculo, que para colisiones futuras está en 1.
     label = 0
+
     while(!isempty(pq))
         label += 1
         evento = Collections.dequeue!(pq)
         if (evento.predictedcollision >= evento.referencedisk.lastcollision)
-            if typeof(evento.diskorwall) == Disk{Float64}
+            if typeof(evento.diskorwall) == Disk
                 if (evento.predictedcollision >= evento.diskorwall.lastcollision)
                     evento.diskorwall.lastcollision = label
                     evento.referencedisk.lastcollision = label

@@ -10,11 +10,11 @@ abstract Wall <: Object
 @doc doc"""Type with attributes position(r), velocity, radius, mass and label. Both position and velocity
 are vectors. The label attribute corresponds to the cycle within the main loop in which the Disk suffered
 its last collision (see simulacionanimada in *main.jl*) """->
-type Disk{T<:Float64} <:Object
+type Disk <:Object
     #I would like to define independently r as r::Array{Float64,1} and v as v::Array{Float64,1}, but an error is yield
     #"Too many arguments for disk". For the moment this definition is good.
-  r::Array{T,1}
-  v::Array{T,1}
+  r::Array{Float64,1}
+  v::Array{Float64,1}
   radius::Float64
   mass::Float64
   lastcollision ::Int
