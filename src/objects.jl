@@ -10,11 +10,11 @@ abstract Wall <: Object
 @doc doc"""Type with attributes position(r), velocity, radius, mass and label. Both position and velocity
 are vectors. The label attribute corresponds to the cycle within the main loop in which the Disk suffered
 its last collision (see simulacionanimada in *main.jl*) """->
-type Disk{T<:Number} <: Object
-  r::Array{T,1}
-  v::Array{T,1}
-  radius::T
-  mass::T
+type Disk <: Object
+  r::Array{Float64,1}
+  v::Array{Float64,1}
+  radius::Float64
+  mass::Float64
   lastcollision ::Int
 end
 
