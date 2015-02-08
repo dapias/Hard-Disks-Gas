@@ -11,8 +11,6 @@ abstract Wall <: Object
 are vectors. The label attribute corresponds to the cycle within the main loop in which the Disk suffered
 its last collision (see simulacionanimada in *main.jl*) """->
 type Disk <:Object
-    #I would like to define independently r as r::Array{Float64,1} and v as v::Array{Float64,1}, but an error is yield
-    #"Too many arguments for disk". For the moment this definition is good.
   r::Array{Float64,1}
   v::Array{Float64,1}
   radius::Float64
