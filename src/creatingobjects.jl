@@ -21,8 +21,11 @@ end
 
 @doc doc"""Creates a Disks enclosed in the box with boundaries at Lx1, Lx2, Ly1, Ly2; and with a random velocity
 between vmim and vmax"""->
-function createdisk(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
-    radius = randuniform(0.5,1.0)[1]
+function createdisk(Lx1, Lx2, Ly1, Ly2, vmin, vmax, N)
+    deltax = Lx2 - Lx1
+    deltay = Ly2 - Ly1
+    radius_max = (deltax*deltay/(4*N))^(1/2.)
+    radius = randuniform(0,radius_max)[1]
     mass = randuniform(0.5,1.0)[1]
     cotainfx = Lx1 + radius
     cotasupx = Lx2 - radius
@@ -38,12 +41,12 @@ end
 @doc doc"""Creates N Disks enclosed in the box with boundaries at Lx1, Lx2, Ly1, Ly2; and with a random
 velocity between vmin and vmax"""->
 function createdisks(N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
-    p = createdisk(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
+    p = createdisk(Lx1, Lx2, Ly1, Ly2, vmin, vmax, N)
     particulas = [p]
     for i in 2:N
         overlap = true
         while(overlap)
-            p = createdisk(Lx1, Lx2, Ly1, Ly2, vmin, vmax)
+            p = createdisk(Lx1, Lx2, Ly1, Ly2, vmin, vmax, N)
             arreglo = [false]
             for particula in particulas
                 test = solape(particula, p)
