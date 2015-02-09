@@ -25,10 +25,9 @@ function initialcollisions!(particulas::Array, paredes::Array, tinicial::Number,
             dt = dtcollision(particulas[i], pared)
             push!(tiempo,dt)
         end
-        dt = minimum(tiempo)
-        k = findin(tiempo,dt)
+        dt,k = findmin(tiempo)
         if tinicial + dt < tmax
-            Collections.enqueue!(pq,Event(tinicial+dt, particulas[i], paredes[k[1]],0),tinicial+dt)
+            Collections.enqueue!(pq,Event(tinicial+dt, particulas[i], paredes[k],0),tinicial+dt)
         end
         for j in i+1:length(particulas) #Numero de pares sin repetición N(N-1)/2
             dt = dtcollision(particulas[i], particulas[j])
@@ -49,10 +48,9 @@ function futurecollisions!(particula, particulas, paredes, tinicial, tmax, pq, e
         dt = dtcollision(particula, pared)
         push!(tiempo,dt)
     end
-    dt = minimum(tiempo)
-    k = findin(tiempo,dt)
+    dt,k = findmin(tiempo)
     if tinicial + dt < tmax
-        Collections.enqueue!(pq,Event(tinicial+dt, particula, paredes[k[1]], etiqueta),tinicial+dt)
+        Collections.enqueue!(pq,Event(tinicial+dt, particula, paredes[k], etiqueta),tinicial+dt)
     end
 
     tiempo = Float64[]
@@ -76,10 +74,9 @@ function futurecollisions!(particula1, particula2, particulas, paredes, tinicial
         dt = dtcollision(particula1, pared)
         push!(tiempo,dt)
     end
-    dt = minimum(tiempo)
-    k = findin(tiempo,dt)
+    dt,k = findmin(tiempo)
     if tinicial + dt < tmax
-        Collections.enqueue!(pq,Event(tinicial+dt, particula1, paredes[k[1]], etiqueta),tinicial+dt)
+        Collections.enqueue!(pq,Event(tinicial+dt, particula1, paredes[k], etiqueta),tinicial+dt)
     end
 
     tiempo = Float64[]
@@ -87,10 +84,9 @@ function futurecollisions!(particula1, particula2, particulas, paredes, tinicial
         dt = dtcollision(particula2, pared)
         push!(tiempo,dt)
     end
-    dt = minimum(tiempo)
-    k = findin(tiempo,dt)
+    dt,k = findmin(tiempo)
     if tinicial + dt < tmax
-        Collections.enqueue!(pq,Event(tinicial+dt, particula2, paredes[k[1]], etiqueta),tinicial+dt)
+        Collections.enqueue!(pq,Event(tinicial+dt, particula2, paredes[k], etiqueta),tinicial+dt)
     end
 
     #Voy a considerar que no hay recolisión entre las partículas que acaban de chocar, por consiguiente ajusto el tiempo de colisión entre disk1 y
@@ -191,5 +187,5 @@ function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     posiciones, velocidades, tiempo, particulas, masas
 end
 
-#Fin del módulo
+
 end
