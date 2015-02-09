@@ -25,7 +25,7 @@ function createdisk(Lx1, Lx2, Ly1, Ly2, vmin, vmax, N)
     deltax = Lx2 - Lx1
     deltay = Ly2 - Ly1
     radius_max = (deltax*deltay/(4*N))^(1/2.)
-    radius = randuniform(0,radius_max)[1]
+    radius = randuniform(radius_max*0.2,radius_max*0.8)[1]
     mass = randuniform(0.5,1.0)[1]
     cotainfx = Lx1 + radius
     cotasupx = Lx2 - radius
