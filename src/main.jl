@@ -18,12 +18,14 @@ isless(e1::Event, e2::Event) = e1.tiempo < e2.tiempo
 @doc doc"""Calculates the initial feasible Events and push them into the PriorityQueue with label
 equal to 0"""->
 function initialcollisions!(particulas::Array, paredes::Array, tinicial::Number, tmax::Number, pq)
-#Puts the initial label of the
+    #Puts the initial label of the
     for i in 1:length(particulas)
-        tiempo = Float64[]
+        tiempo = zeros(4)
+        indice = 1
         for pared in paredes
             dt = dtcollision(particulas[i], pared)
-            push!(tiempo,dt)
+            tiempo[indice] = dt
+            indice += 1
         end
         dt,k = findmin(tiempo)
         if tinicial + dt < tmax
@@ -43,10 +45,12 @@ end
 @doc doc"""Updates the PriorityQueue pushing into it all the feasible Events that can occur after the collision
 of a Disk with a Wall"""->
 function futurecollisions!(particula, particulas, paredes, tinicial, tmax, pq, etiqueta )
-    tiempo = Float64[]
+    tiempo = zeros(4)
+    indice = 1
     for pared in paredes
         dt = dtcollision(particula, pared)
-        push!(tiempo,dt)
+        tiempo[indice] = dt
+        indice += 1
     end
     dt,k = findmin(tiempo)
     if tinicial + dt < tmax
@@ -69,20 +73,24 @@ end
 of two Disks."""->
 function futurecollisions!(particula1, particula2, particulas, paredes, tinicial, tmax, pq, etiqueta)
 
-    tiempo = Float64[]
+    tiempo = zeros(4)
+    indice = 1
     for pared in paredes
         dt = dtcollision(particula1, pared)
-        push!(tiempo,dt)
+        tiempo[indice] = dt
+        indice += 1
     end
     dt,k = findmin(tiempo)
     if tinicial + dt < tmax
         Collections.enqueue!(pq,Event(tinicial+dt, particula1, paredes[k], etiqueta),tinicial+dt)
     end
 
-    tiempo = Float64[]
+    tiempo = zeros(4)
+    indice = 1
     for pared in paredes
         dt = dtcollision(particula2, pared)
-        push!(tiempo,dt)
+        tiempo[indice] = dt
+        indice += 1
     end
     dt,k = findmin(tiempo)
     if tinicial + dt < tmax
