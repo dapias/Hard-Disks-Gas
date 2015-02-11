@@ -205,7 +205,6 @@ function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     while(!isempty(pq))
         label += 1
         evento = Collections.dequeue!(pq)
-        #if (evento.predictedcollision >= evento.referencedisk.lastcollision)
             validcollision = validingcollision(evento)
             if validcollision == true
                 updatinglabels(evento,label)
