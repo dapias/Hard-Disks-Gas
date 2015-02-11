@@ -15,32 +15,6 @@ export simulation, energy
 #This allow to use the PriorityQueue providing a criterion to select the priority of an Event.
 isless(e1::Event, e2::Event) = e1.tiempo < e2.tiempo
 
-@doc doc"""Calculates the initial feasible Events and push them into the PriorityQueue with label
-equal to 0"""->
-function initialcollisions!(particulas::Array, paredes::Array, tinicial::Number, tmax::Number, pq)
-    #Puts the initial label of the
-    for i in 1:length(particulas)
-        tiempo = zeros(4)
-        indice = 1
-        for pared in paredes
-            dt = dtcollision(particulas[i], pared)
-            tiempo[indice] = dt
-            indice += 1
-        end
-        dt,k = findmin(tiempo)
-        if tinicial + dt < tmax
-            Collections.enqueue!(pq,Event(tinicial+dt, particulas[i], paredes[k],0),tinicial+dt)
-        end
-        for j in i+1:length(particulas) #Numero de pares sin repetición N(N-1)/2
-            dt = dtcollision(particulas[i], particulas[j])
-            if tinicial + dt < tmax
-                Collections.enqueue!(pq,Event(tinicial+dt, particulas[i], particulas[j],0),tinicial+dt)
-            end
-        end
-    end
-    pq
-end
-
 function collisions_with_wall!(particula::Disk,paredes::Array{Wall,1},tinicial, tmax, pq,etiqueta)
     tiempo = zeros(4)
     indice = 1
@@ -54,6 +28,26 @@ function collisions_with_wall!(particula::Disk,paredes::Array{Wall,1},tinicial, 
         Collections.enqueue!(pq,Event(tinicial+dt, particula, paredes[k], etiqueta),tinicial+dt)
     end
 end
+
+@doc doc"""Calculates the initial feasible Events and push them into the PriorityQueue with label
+equal to 0"""->
+function initialcollisions!(particulas::Array, paredes::Array, tinicial::Number, tmax::Number, pq)
+    #Puts etiqueta by default equal to zero
+    for i in 1:length(particulas)
+
+        collisions_with_wall!(particulas[i],paredes,tinicial, tmax, pq, 0)
+
+        for j in i+1:length(particulas) #Numero de pares sin repetición N(N-1)/2
+            dt = dtcollision(particulas[i], particulas[j])
+            if tinicial + dt < tmax
+                Collections.enqueue!(pq,Event(tinicial+dt, particulas[i], particulas[j],0),tinicial+dt)
+            end
+        end
+    end
+    pq
+end
+
+
 
 
 
