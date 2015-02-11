@@ -45,6 +45,7 @@ end
 @doc doc"""Updates the PriorityQueue pushing into it all the feasible Events that can occur after the collision
 of a Disk with a Wall"""->
 function futurecollisions!(particula::Disk, wall::Wall, particulas, paredes, tinicial, tmax, pq, etiqueta )
+    #The wall parameter is not used but it is passed to take advantage of the multiple dispatch for futurecollisions!.
     tiempo = zeros(4)
     indice = 1
     for pared in paredes
@@ -145,27 +146,25 @@ function startingsimulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     return particulas, paredes, posiciones, velocidades, masas, pq, t, tiempo
 end
 
-
-function validingcollision(evento::Event, label)
+@doc """Returns true if the event was predicted after the last collision label of the Disk(s)"""->
+function validingcollision(event::Event)
    validcollision = false
    function validing(d::Disk)
-        if (evento.predictedcollision >= evento.diskorwall.lastcollision)
-                    #evento.diskorwall.lastcollision = label
-                    #evento.referencedisk.lastcollision = label
+        if (event.predictedcollision >= event.diskorwall.lastcollision)
             validcollision = true
         end
     end
     function validing(w::Wall)
-        #evento.referencedisk.lastcollision = label
         validcollision  = true
     end
 
-    if evento.predictedcollision >= evento.referencedisk.lastcollision
-        validing(evento.diskorwall)
+    if event.predictedcollision >= event.referencedisk.lastcollision
+        validing(event.diskorwall)
     end
     validcollision
 end
 
+@doc """Update the lastcollision label of the Disk(s) with the label of the loop"""->
 function updatinglabels(evento::Event,label)
     function updating(d1::Disk,d2::Disk)
             evento.diskorwall.lastcollision = label
@@ -187,6 +186,7 @@ function moveparticles(particulas, delta_t)
     end
 end
 
+
 function updateanimationlists(particulas, posiciones,velocidades,N)
     for i in 1:N
         push!(posiciones, particulas[i].r)
@@ -196,7 +196,7 @@ end
 
 
 @doc doc"""Contains the main loop of the project. The PriorityQueue is filled at each step with Events associated
-to the collider Disk(s); and at the same time the element with the highest physical priority (lowest time) is removed
+to the collider Disk(s); and the element with the highest physical priority (lowest time) is removed
 from the Queue and ignored if it is physically meaningless. The loop goes until the last Event is removed
 from the Data Structure, which is delimited by the maximum time(tmax)."""->
 function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
@@ -206,7 +206,7 @@ function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
         label += 1
         evento = Collections.dequeue!(pq)
         #if (evento.predictedcollision >= evento.referencedisk.lastcollision)
-            validcollision = validingcollision(evento,label)
+            validcollision = validingcollision(evento)
             if validcollision == true
                 updatinglabels(evento,label)
                 moveparticles(particulas,evento.tiempo-t)
