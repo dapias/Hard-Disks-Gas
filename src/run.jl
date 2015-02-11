@@ -10,4 +10,4 @@ using Visual
 #Additionally the parameters from input_parameters.jl are called.
 
 simulacion = simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax);
-visualizate(simulacion, N, Lx1, Lx2, Ly1, Ly2)
+@time visualizate(simulacion, N, Lx1, Lx2, Ly1, Ly2)
