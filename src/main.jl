@@ -41,11 +41,7 @@ function initialcollisions!(particulas::Array, paredes::Array, tinicial::Number,
     pq
 end
 
-
-@doc doc"""Updates the PriorityQueue pushing into it all the feasible Events that can occur after the collision
-of a Disk with a Wall"""->
-function futurecollisions!(particula::Disk, wall::Wall, particulas, paredes, tinicial, tmax, pq, etiqueta )
-    #The wall parameter is not used but it is passed to take advantage of the multiple dispatch for futurecollisions!.
+function collisions_with_wall!(particula::Disk,paredes::Array{Wall,1},tinicial, tmax, pq,etiqueta)
     tiempo = zeros(4)
     indice = 1
     for pared in paredes
@@ -57,6 +53,16 @@ function futurecollisions!(particula::Disk, wall::Wall, particulas, paredes, tin
     if tinicial + dt < tmax
         Collections.enqueue!(pq,Event(tinicial+dt, particula, paredes[k], etiqueta),tinicial+dt)
     end
+end
+
+
+
+@doc doc"""Updates the PriorityQueue pushing into it all the feasible Events that can occur after the collision
+of a Disk with a Wall"""->
+function futurecollisions!(particula::Disk, wall::Wall, particulas, paredes, tinicial, tmax, pq, etiqueta )
+    #The wall parameter is not used but it is passed to take advantage of the multiple dispatch for futurecollisions!.
+
+    collisions_with_wall!(particula,paredes,tinicial, tmax, pq, etiqueta)
 
     tiempo = Float64[]
     for p in particulas
@@ -74,32 +80,9 @@ end
 of two Disks."""->
 function futurecollisions!(particula1::Disk, particula2::Disk, particulas, paredes, tinicial, tmax, pq, etiqueta)
 
-    tiempo = zeros(4)
-    indice = 1
-    for pared in paredes
-        dt = dtcollision(particula1, pared)
-        tiempo[indice] = dt
-        indice += 1
-    end
-    dt,k = findmin(tiempo)
-    if tinicial + dt < tmax
-        Collections.enqueue!(pq,Event(tinicial+dt, particula1, paredes[k], etiqueta),tinicial+dt)
-    end
+    collisions_with_wall!(particula1,paredes,tinicial, tmax, pq, etiqueta)
+    collisions_with_wall!(particula2,paredes,tinicial, tmax, pq, etiqueta)
 
-    tiempo = zeros(4)
-    indice = 1
-    for pared in paredes
-        dt = dtcollision(particula2, pared)
-        tiempo[indice] = dt
-        indice += 1
-    end
-    dt,k = findmin(tiempo)
-    if tinicial + dt < tmax
-        Collections.enqueue!(pq,Event(tinicial+dt, particula2, paredes[k], etiqueta),tinicial+dt)
-    end
-
-    #Voy a considerar que no hay recolisión entre las partículas que acaban de chocar, por consiguiente ajusto el tiempo de colisión entre disk1 y
-    #disk2 igual a infinito.
     tiempo = Float64[]
     for p in particulas
         if (particula1 != p) & (particula2 != p)
@@ -148,8 +131,8 @@ end
 
 @doc """Returns true if the event was predicted after the last collision label of the Disk(s)"""->
 function validingcollision(event::Event)
-   validcollision = false
-   function validing(d::Disk)
+    validcollision = false
+    function validing(d::Disk)
         if (event.predictedcollision >= event.diskorwall.lastcollision)
             validcollision = true
         end
@@ -167,12 +150,12 @@ end
 @doc """Update the lastcollision label of the Disk(s) with the label of the loop"""->
 function updatinglabels(evento::Event,label)
     function updating(d1::Disk,d2::Disk)
-            evento.diskorwall.lastcollision = label
-            evento.referencedisk.lastcollision = label
+        evento.diskorwall.lastcollision = label
+        evento.referencedisk.lastcollision = label
     end
 
     function updating(d1::Disk,w::Wall)
-            evento.referencedisk.lastcollision = label
+        evento.referencedisk.lastcollision = label
     end
 
     updating(evento.referencedisk,evento.diskorwall)
@@ -205,16 +188,16 @@ function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     while(!isempty(pq))
         label += 1
         evento = Collections.dequeue!(pq)
-            validcollision = validingcollision(evento)
-            if validcollision == true
-                updatinglabels(evento,label)
-                moveparticles(particulas,evento.tiempo-t)
-                t = evento.tiempo
-                push!(tiempo,t)
-                collision(evento.referencedisk,evento.diskorwall)
-                updateanimationlists(particulas, posiciones,velocidades,N)
-                futurecollisions!(evento.referencedisk, evento.diskorwall, particulas, paredes, t, tmax, pq,label)
-            end
+        validcollision = validingcollision(evento)
+        if validcollision == true
+            updatinglabels(evento,label)
+            moveparticles(particulas,evento.tiempo-t)
+            t = evento.tiempo
+            push!(tiempo,t)
+            collision(evento.referencedisk,evento.diskorwall)
+            updateanimationlists(particulas, posiciones,velocidades,N)
+            futurecollisions!(evento.referencedisk, evento.diskorwall, particulas, paredes, t, tmax, pq,label)
+        end
     end
     push!(tiempo, tmax)
     posiciones, velocidades, tiempo, particulas, masas
