@@ -44,7 +44,7 @@ end
 
 @doc doc"""Updates the PriorityQueue pushing into it all the feasible Events that can occur after the collision
 of a Disk with a Wall"""->
-function futurecollisions!(particula, particulas, paredes, tinicial, tmax, pq, etiqueta )
+function futurecollisions!(particula::Disk, wall::Wall, particulas, paredes, tinicial, tmax, pq, etiqueta )
     tiempo = zeros(4)
     indice = 1
     for pared in paredes
@@ -71,7 +71,7 @@ end
 
 @doc doc"""Updates the PriorityQueue pushing into it all the possible Events that can occur after the collision
 of two Disks."""->
-function futurecollisions!(particula1, particula2, particulas, paredes, tinicial, tmax, pq, etiqueta)
+function futurecollisions!(particula1::Disk, particula2::Disk, particulas, paredes, tinicial, tmax, pq, etiqueta)
 
     tiempo = zeros(4)
     indice = 1
@@ -146,6 +146,54 @@ function startingsimulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
 end
 
 
+function validingcollision(evento::Event, label)
+   validcollision = false
+   function validing(d::Disk)
+        if (evento.predictedcollision >= evento.diskorwall.lastcollision)
+                    #evento.diskorwall.lastcollision = label
+                    #evento.referencedisk.lastcollision = label
+            validcollision = true
+        end
+    end
+    function validing(w::Wall)
+        #evento.referencedisk.lastcollision = label
+        validcollision  = true
+    end
+
+    if evento.predictedcollision >= evento.referencedisk.lastcollision
+        validing(evento.diskorwall)
+    end
+    validcollision
+end
+
+function updatinglabels(evento::Event,label)
+    function updating(d1::Disk,d2::Disk)
+            evento.diskorwall.lastcollision = label
+            evento.referencedisk.lastcollision = label
+    end
+
+    function updating(d1::Disk,w::Wall)
+            evento.referencedisk.lastcollision = label
+    end
+
+    updating(evento.referencedisk,evento.diskorwall)
+end
+
+
+
+function moveparticles(particulas, delta_t)
+    for particula in particulas
+        move(particula,delta_t)
+    end
+end
+
+function updateanimationlists(particulas, posiciones,velocidades,N)
+    for i in 1:N
+        push!(posiciones, particulas[i].r)
+        push!(velocidades, particulas[i].v)
+    end
+end
+
 
 @doc doc"""Contains the main loop of the project. The PriorityQueue is filled at each step with Events associated
 to the collider Disk(s); and at the same time the element with the highest physical priority (lowest time) is removed
@@ -154,42 +202,20 @@ from the Data Structure, which is delimited by the maximum time(tmax)."""->
 function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     particulas, paredes, posiciones, velocidades, masas, pq, t, tiempo = startingsimulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     label = 0
-
     while(!isempty(pq))
         label += 1
         evento = Collections.dequeue!(pq)
-        if (evento.predictedcollision >= evento.referencedisk.lastcollision)
-            if typeof(evento.diskorwall) == Disk
-                if (evento.predictedcollision >= evento.diskorwall.lastcollision)
-                    evento.diskorwall.lastcollision = label
-                    evento.referencedisk.lastcollision = label
-                    for particula in particulas
-                        move(particula,evento.tiempo - t)
-                    end
-                    t = evento.tiempo
-                    push!(tiempo,t)
-                    collision(evento.referencedisk,evento.diskorwall)
-                    for i in 1:N
-                        push!(posiciones, particulas[i].r)
-                        push!(velocidades, particulas[i].v)
-                    end
-                    futurecollisions!(evento.referencedisk, evento.diskorwall, particulas, paredes, t, tmax, pq,label)
-                end
-            else
-                evento.referencedisk.lastcollision = label
-                for particula in particulas
-                    move(particula,evento.tiempo - t)
-                end
+        #if (evento.predictedcollision >= evento.referencedisk.lastcollision)
+            validcollision = validingcollision(evento,label)
+            if validcollision == true
+                updatinglabels(evento,label)
+                moveparticles(particulas,evento.tiempo-t)
                 t = evento.tiempo
                 push!(tiempo,t)
                 collision(evento.referencedisk,evento.diskorwall)
-                for i in 1:N
-                    push!(posiciones, particulas[i].r)
-                    push!(velocidades, particulas[i].v)
-                end
-                futurecollisions!(evento.referencedisk, particulas, paredes, t, tmax, pq, label)
+                updateanimationlists(particulas, posiciones,velocidades,N)
+                futurecollisions!(evento.referencedisk, evento.diskorwall, particulas, paredes, t, tmax, pq,label)
             end
-        end
     end
     push!(tiempo, tmax)
     posiciones, velocidades, tiempo, particulas, masas
@@ -197,3 +223,55 @@ end
 
 
 end
+
+
+# @doc doc"""Contains the main loop of the project. The PriorityQueue is filled at each step with Events associated
+# to the collider Disk(s); and at the same time the element with the highest physical priority (lowest time) is removed
+# from the Queue and ignored if it is physically meaningless. The loop goes until the last Event is removed
+# from the Data Structure, which is delimited by the maximum time(tmax)."""->
+# function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
+#     particulas, paredes, posiciones, velocidades, masas, pq, t, tiempo = startingsimulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
+#     label = 0
+
+#     while(!isempty(pq))
+#         label += 1
+#         evento = Collections.dequeue!(pq)
+#         if (evento.predictedcollision >= evento.referencedisk.lastcollision)
+#             if typeof(evento.diskorwall) == Disk
+#                 if (evento.predictedcollision >= evento.diskorwall.lastcollision)
+#                     evento.diskorwall.lastcollision = label
+#                     evento.referencedisk.lastcollision = label
+#                     for particula in particulas
+#                         move(particula,evento.tiempo - t)
+#                     end
+#                     t = evento.tiempo
+#                     push!(tiempo,t)
+#                     collision(evento.referencedisk,evento.diskorwall)
+#                     for i in 1:N
+#                         push!(posiciones, particulas[i].r)
+#                         push!(velocidades, particulas[i].v)
+#                     end
+#                     futurecollisions!(evento.referencedisk, evento.diskorwall, particulas, paredes, t, tmax, pq,label)
+#                 end
+#             else
+#                 evento.referencedisk.lastcollision = label
+#                 for particula in particulas
+#                     move(particula,evento.tiempo - t)
+#                 end
+#                 t = evento.tiempo
+#                 push!(tiempo,t)
+#                 collision(evento.referencedisk,evento.diskorwall)
+#                 for i in 1:N
+#                     push!(posiciones, particulas[i].r)
+#                     push!(velocidades, particulas[i].v)
+#                 end
+#                 futurecollisions!(evento.referencedisk, particulas, paredes, t, tmax, pq, label)
+#             end
+#         end
+#     end
+#     push!(tiempo, tmax)
+#     posiciones, velocidades, tiempo, particulas, masas
+# end
+
+
+# end
