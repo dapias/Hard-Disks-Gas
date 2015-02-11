@@ -124,35 +124,35 @@ function startingsimulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
 end
 
 @doc """Returns true if the event was predicted after the last collision label of the Disk(s)"""->
-function validingcollision(event::Event)
+function validatecollision(event::Event)
     validcollision = false
-    function validing(d::Disk)
+    function validate(d::Disk)
         if (event.predictedcollision >= event.diskorwall.lastcollision)
             validcollision = true
         end
     end
-    function validing(w::Wall)
+    function validate(w::Wall)
         validcollision  = true
     end
 
     if event.predictedcollision >= event.referencedisk.lastcollision
-        validing(event.diskorwall)
+        validate(event.diskorwall)
     end
     validcollision
 end
 
 @doc """Update the lastcollision label of the Disk(s) with the label of the loop"""->
-function updatinglabels(evento::Event,label)
-    function updating(d1::Disk,d2::Disk)
+function updatelabels(evento::Event,label)
+    function update(d1::Disk,d2::Disk)
         evento.diskorwall.lastcollision = label
         evento.referencedisk.lastcollision = label
     end
 
-    function updating(d1::Disk,w::Wall)
+    function update(d1::Disk,w::Wall)
         evento.referencedisk.lastcollision = label
     end
 
-    updating(evento.referencedisk,evento.diskorwall)
+    update(evento.referencedisk,evento.diskorwall)
 end
 
 
@@ -182,9 +182,9 @@ function simulation(tinicial, tmax, N, Lx1, Lx2, Ly1, Ly2, vmin, vmax)
     while(!isempty(pq))
         label += 1
         evento = Collections.dequeue!(pq)
-        validcollision = validingcollision(evento)
+        validcollision = validatecollision(evento)
         if validcollision == true
-            updatinglabels(evento,label)
+            updatelabels(evento,label)
             moveparticles(particulas,evento.tiempo-t)
             t = evento.tiempo
             push!(tiempo,t)
