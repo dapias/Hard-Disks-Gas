@@ -79,7 +79,7 @@ function futurecollisions!(particula1::Disk, particula2::Disk, particulas, pared
 
     tiempo = Float64[]
     for p in particulas
-        if (particula1 != p) & (particula2 != p)
+        if (particula1 != p)
             dt = dtcollision(particula1, p)
             if tinicial + dt < tmax
                 Collections.enqueue!(pq,Event(tinicial+dt, particula1, p, etiqueta),tinicial+dt)
